@@ -1,0 +1,57 @@
+@startuml
+' Абстрактный класс SearchApiManager
+abstract class SearchApiManager {
+    - api_key: str
+    - folder_id: str
+    - queries: list
+    - domains: list
+    - region: str
+    + __init__(api_key: str, folder_id: str, queries: list, domains: list, region: str)
+    + search(query: str): str
+    + parse_response(response: str): tuple
+    + process_queries(): list
+}
+
+' Класс YandexSearchApiManager, который наследует SearchApiManager
+class YandexSearchApiManager {
+    + search(query: str): str
+    + parse_response(xml_response: str): tuple
+    + save_to_csv(results: list, output_file: str): void
+    + display_results(results: list): void
+}
+
+SearchApiManager <|-- YandexSearchApiManager
+
+' Класс для конфигурации, который хранит идентификатор каталога и ключ API
+class ConfigManager {
+    - catalog_id: str
+    - api_key: str
+    + set_catalog_data(): void
+}
+
+' Класс для ввода данных, который управляет вводом с консоли или из файла
+class InputManager {
+    + read_from_file(input_file: str): list
+    + get_input_from_console(prompt: str): list
+    + set_queries(): list
+}
+
+' Класс для управления данными, использующий ConfigManager и InputManager
+class DataManager {
+    - config_manager: ConfigManager
+    - input_manager: InputManager
+    + setup(): void
+    + display_data(): void
+}
+
+' Класс Main, связывающий все компоненты и запускающий программу
+class Main {
+    + main(): void
+}
+Main -up> YandexSearchApiManager
+Main -> DataManager
+
+DataManager -> ConfigManager
+DataManager -> InputManager
+
+@enduml
